@@ -31,7 +31,7 @@ Create an instance of DWBubbleMenuButton
             20.0,
             menuButton.frame.size.width,
             menuButton.frame.size.height), expansionDirection: ExpansionDirection.DirectionDown)
-       dbubbleMenuButton.homeButtonView = menuButton;```
+       dbubbleMenuButton.homeButtonView = menuButton;
 
 Add buttons to your bubble menu
 
