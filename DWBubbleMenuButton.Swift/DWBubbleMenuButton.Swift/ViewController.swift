@@ -21,9 +21,6 @@ class ViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         
         
-         var menuButton =UIButton.buttonWithType(UIButtonType.System)
-        
-        
         // Create down menu button
         var homeLabel = self.createHomeButtonView()
         
