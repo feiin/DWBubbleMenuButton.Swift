@@ -498,28 +498,29 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         fatalError("init(coder:) has not been implemented")
     }
     
+
     //pragma mark -
     //pragma mark Touch Handling Methods
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         
         super.touchesBegan(touches, withEvent: event)
         
-        var touch = touches.anyObject()
+        var touch = touches.first
         
         self._setTouchHighlighted(true)
         
         
     }
 
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
         super.touchesEnded(touches, withEvent: event)
         
         
         println("touchesMoved")
-        var touch = touches.anyObject()
+        var touch = touches.first as! UITouch
         self._setTouchHighlighted(false)
         
-        if(CGRectContainsPoint(self.homeButtonView!.frame, touch!.locationInView(self))) {
+        if(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self))) {
             if(isCollapsed){
                 self.showButtons()
             }
@@ -529,17 +530,17 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         }
     }
     
-    override func touchesCancelled(touches: NSSet!, withEvent event: UIEvent!) {
+    override func touchesCancelled(touches:Set<NSObject>, withEvent event: UIEvent!) {
         super.touchesCancelled(touches, withEvent: event)
         self._setTouchHighlighted(false)
     }
     
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
         
         super.touchesMoved(touches, withEvent: event)
         
-        var touch=touches.anyObject()
-        self._setTouchHighlighted(CGRectContainsPoint(self.homeButtonView!.frame, touch!.locationInView(self)))
+        var touch=touches.first as! UITouch
+        self._setTouchHighlighted(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self)))
         
     }
     
@@ -561,7 +562,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         for subView in self.subviews
         {
             if (CGRectContainsPoint(subView.frame, point)) {
-                return subView as UIView;
+                return subView as! UIView;
             }
 
         }

@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         var buttons:[UIButton]=[]
         var i = 0
         for str in ["A","B","C","D","E","F"] {
-            var button:UIButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
+            var button:UIButton = UIButton.buttonWithType(UIButtonType.System) as! UIButton
             button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
             button.setTitle(str, forState: UIControlState.Normal)
             
@@ -91,7 +91,7 @@ class ViewController: UIViewController {
     func createButtonWithName(imageName:NSString) -> UIButton {
         var button = UIButton()
         
-        button.setImage(UIImage(named: imageName), forState: UIControlState.Normal)
+        button.setImage(UIImage(named: imageName as String), forState: UIControlState.Normal)
         button.sizeToFit()
         button.addTarget(self, action: Selector("buttonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
         
