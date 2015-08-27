@@ -11,6 +11,11 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    
+    var downMenuButton:DWBubbleMenuButton!
+    
+    var upMenuView:DWBubbleMenuButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -18,13 +23,19 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    @IBAction func hiddenAll(sender: AnyObject) {
+        
+        downMenuButton.dismissButtons()
+        upMenuView.dismissButtons()
+        
+    }
     override func viewDidAppear(animated: Bool) {
         
         
         // Create down menu button
         var homeLabel = self.createHomeButtonView()
         
-        var downMenuButton = DWBubbleMenuButton(frame: CGRectMake(20.0,
+         downMenuButton = DWBubbleMenuButton(frame: CGRectMake(20.0,
             20.0,
             homeLabel.frame.size.width,
             homeLabel.frame.size.height), expansionDirection: ExpansionDirection.DirectionDown)
@@ -37,7 +48,7 @@ class ViewController: UIViewController {
         // Create up menu button
         var homeLabel2 =  self.createHomeButtonView()
         
-        var upMenuView = DWBubbleMenuButton(frame: CGRectMake(self.view.frame.size.width - homeLabel2.frame.size.width - 20.0,self.view.frame.size.height - homeLabel2.frame.size.height - 20.0,
+         upMenuView = DWBubbleMenuButton(frame: CGRectMake(self.view.frame.size.width - homeLabel2.frame.size.width - 20.0,self.view.frame.size.height - homeLabel2.frame.size.height - 20.0,
             homeLabel2.frame.size.width,homeLabel2.frame.size.height),expansionDirection: .DirectionUp)
         upMenuView.homeButtonView = homeLabel2
         
