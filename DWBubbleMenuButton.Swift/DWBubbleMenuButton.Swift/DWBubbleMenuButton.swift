@@ -69,7 +69,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     func handleTapGesture(sender: UITapGestureRecognizer) {
         if sender.state == .Ended {
             
-            var touchLocation:CGPoint = self.tapGestureRecognizer.locationInView(self)
+            let touchLocation:CGPoint = self.tapGestureRecognizer.locationInView(self)
             
             if (self.collapseAfterSelection && isCollapsed == false && CGRectContainsPoint(self.homeButtonView!.frame, touchLocation) == false) {
                self.dismissButtons()
@@ -81,14 +81,14 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     
     func _animateWithBlock(block: (() -> Void)!){
         
-        UIView.transitionWithView(self, duration: self.animationDuration, options: UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut, animations: block, completion: nil)
+        UIView.transitionWithView(self, duration: self.animationDuration, options: [UIViewAnimationOptions.BeginFromCurrentState, UIViewAnimationOptions.CurveEaseInOut], animations: block, completion: nil)
     }
     
 
     func _setTouchHighlighted(highlighted:Bool)
     {
         
-        var alphaValue = highlighted ? highlightAlpha : standbyAlpha;
+        let alphaValue = highlighted ? highlightAlpha : standbyAlpha;
     
         if (self.homeButtonView!.alpha == alphaValue) {
            return
@@ -181,19 +181,19 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         var btnContainer:[UIButton] = buttonContainer
         
         if self.direction == .DirectionUp || direction == .DirectionLeft {
-            btnContainer = self.buttonContainer.reverse()
+            btnContainer = Array(self.buttonContainer.reverse())
             
         }
         
         var i=0
         for i=0;i<btnContainer.count;i++ {
             
-            var index = btnContainer.count - (i + 1)
-            var button = btnContainer[index]
+            let index = btnContainer.count - (i + 1)
+            let button = btnContainer[index]
             button.hidden = false
             
             // position animation
-            var positionAnimation = CABasicAnimation(keyPath: "position")
+            let positionAnimation = CABasicAnimation(keyPath: "position")
             
             var originPosition = CGPointZero
             var finalPosition = CGPointZero
@@ -254,7 +254,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
             
             // scale animation
-           var scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+           let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
             
             scaleAnimation.duration = self.animationDuration;
             
@@ -307,7 +307,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
             for btn in self.buttonContainer {
                 
-                var button = btn as UIButton
+                let button = btn as UIButton
                 button.transform = CGAffineTransformIdentity
                 button.hidden = true
             }
@@ -335,7 +335,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             }
             
             // scale animation
-            var scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+            let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
             scaleAnimation.duration = self.animationDuration;
             
             scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -351,9 +351,9 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             button.transform = CGAffineTransformMakeScale(1.0, 1.0);
             
             // position animation
-            var positionAnimation = CABasicAnimation(keyPath: "position")
+            let positionAnimation = CABasicAnimation(keyPath: "position")
             
-            var originPosition = button.layer.position;
+            let originPosition = button.layer.position;
             var finalPosition = CGPointZero;
             
             switch (self.direction!) {
@@ -393,8 +393,8 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     
     
     func _prepareForButtonExpansion(){
-        var buttonHeight:CGFloat = self._combinedButtonHeight()
-        var buttonWidth:CGFloat = self._combinedButtonWidth()
+        let buttonHeight:CGFloat = self._combinedButtonHeight()
+        let buttonWidth:CGFloat = self._combinedButtonWidth()
         
         switch(self.direction!){
             case .DirectionUp:
@@ -494,30 +494,30 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
 
     //pragma mark -
     //pragma mark Touch Handling Methods
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         super.touchesBegan(touches, withEvent: event)
         
-        var touch = touches.first
+       // var touch = touches.first
         
         self._setTouchHighlighted(true)
         
         
     }
 
-    override func touchesEnded(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesEnded(touches, withEvent: event)
         
         
-        println("touchesMoved")
-        var touch = touches.first as! UITouch
+        //print("touchesMoved")
+        let touch = touches.first! as UITouch
         self._setTouchHighlighted(false)
         
         if(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self))) {
@@ -530,16 +530,16 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         }
     }
     
-    override func touchesCancelled(touches:Set<NSObject>, withEvent event: UIEvent!) {
+    override func touchesCancelled(touches:Set<UITouch>?, withEvent event: UIEvent?) {
         super.touchesCancelled(touches, withEvent: event)
         self._setTouchHighlighted(false)
     }
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
         super.touchesMoved(touches, withEvent: event)
         
-        var touch=touches.first as! UITouch
+        let touch=touches.first! as UITouch
         self._setTouchHighlighted(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self)))
         
     }
@@ -548,7 +548,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     //pragma mark UIGestureRecognizer Delegate
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
         
-        var touchLocation =  touch.locationInView(self)
+        let touchLocation =  touch.locationInView(self)
         
         if (self._subviewForPoint(touchLocation) != self && collapseAfterSelection) {
             return true;
@@ -562,7 +562,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         for subView in self.subviews
         {
             if (CGRectContainsPoint(subView.frame, point)) {
-                return subView as! UIView;
+                return subView ;
             }
 
         }

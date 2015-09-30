@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         
         
         // Create down menu button
-        var homeLabel = self.createHomeButtonView()
+        let homeLabel = self.createHomeButtonView()
         
          downMenuButton = DWBubbleMenuButton(frame: CGRectMake(20.0,
             20.0,
@@ -46,7 +46,7 @@ class ViewController: UIViewController {
         
         
         // Create up menu button
-        var homeLabel2 =  self.createHomeButtonView()
+        let homeLabel2 =  self.createHomeButtonView()
         
          upMenuView = DWBubbleMenuButton(frame: CGRectMake(self.view.frame.size.width - homeLabel2.frame.size.width - 20.0,self.view.frame.size.height - homeLabel2.frame.size.height - 20.0,
             homeLabel2.frame.size.width,homeLabel2.frame.size.height),expansionDirection: .DirectionUp)
@@ -65,7 +65,7 @@ class ViewController: UIViewController {
 
     func createHomeButtonView() -> UILabel {
         
-        var label = UILabel(frame: CGRectMake(0.0, 0.0, 40.0, 40.0))
+        let label = UILabel(frame: CGRectMake(0.0, 0.0, 40.0, 40.0))
     
         label.text = "Tap";
         label.textColor = UIColor.whiteColor()
@@ -81,7 +81,7 @@ class ViewController: UIViewController {
         var buttons:[UIButton]=[]
         var i = 0
         for str in ["A","B","C","D","E","F"] {
-            var button:UIButton = UIButton.buttonWithType(UIButtonType.System) as! UIButton
+            let button:UIButton = UIButton(type: UIButtonType.System)
             button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
             button.setTitle(str, forState: UIControlState.Normal)
             
@@ -100,7 +100,7 @@ class ViewController: UIViewController {
     }
     
     func createButtonWithName(imageName:NSString) -> UIButton {
-        var button = UIButton()
+        let button = UIButton()
         
         button.setImage(UIImage(named: imageName as String), forState: UIControlState.Normal)
         button.sizeToFit()
@@ -112,7 +112,7 @@ class ViewController: UIViewController {
     
     func buttonTap(sender:UIButton){
 
-        println("Button tapped, tag:\(sender.tag)")
+        print("Button tapped, tag:\(sender.tag)")
     }
     
        
