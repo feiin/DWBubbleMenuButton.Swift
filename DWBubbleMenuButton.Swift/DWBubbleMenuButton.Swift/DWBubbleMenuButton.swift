@@ -185,8 +185,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
         }
         
-        var i=0
-        for i=0;i<btnContainer.count;i++ {
+        for i in 0..<btnContainer.count {
             
             let index = btnContainer.count - (i + 1)
             let button = btnContainer[index]
@@ -323,9 +322,10 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             self.userInteractionEnabled = true;
         }
         
-         var i = 0
-        var index=0;
-         for i = buttonContainer.count-1;i>=0;i-- {
+        
+         var index=0;
+         let arr = (0...(buttonContainer.count-1)).reverse()
+         for i in arr {
             
             var button = buttonContainer[i]
             
@@ -382,7 +382,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
             button.layer.addAnimation(positionAnimation, forKey:"positionAnimation")
             button.layer.position = originPosition;
-            index++;
+            index += 1;
 
             
         }
@@ -471,7 +471,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         
         self.originFrame = self.frame;
         
-        self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("handleTapGesture:"))
+        self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DWBubbleMenuButton.handleTapGesture(_:)))
         self.tapGestureRecognizer.cancelsTouchesInView = false
         self.tapGestureRecognizer.delegate = self
         self.addGestureRecognizer(self.tapGestureRecognizer)

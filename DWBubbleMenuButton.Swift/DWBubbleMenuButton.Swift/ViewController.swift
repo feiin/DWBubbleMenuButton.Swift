@@ -89,8 +89,9 @@ class ViewController: UIViewController {
             button.layer.cornerRadius = button.frame.size.height / 2.0;
             button.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5)
             button.clipsToBounds = true;
-            button.tag = i++;
-            button.addTarget(self, action: Selector("buttonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+            i += 1
+            button.tag = i;
+            button.addTarget(self, action: #selector(ViewController.buttonTap(_:)), forControlEvents: UIControlEvents.TouchUpInside)
             
             buttons.append(button)
             
@@ -104,7 +105,7 @@ class ViewController: UIViewController {
         
         button.setImage(UIImage(named: imageName as String), forState: UIControlState.Normal)
         button.sizeToFit()
-        button.addTarget(self, action: Selector("buttonTap:"), forControlEvents: UIControlEvents.TouchUpInside)
+        button.addTarget(self, action: #selector(ViewController.buttonTap(_:)), forControlEvents: UIControlEvents.TouchUpInside)
         
         return button
         
