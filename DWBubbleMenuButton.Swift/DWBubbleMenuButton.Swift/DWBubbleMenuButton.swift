@@ -11,19 +11,19 @@ import UIKit
 
 ///ExpansionDirection
 enum ExpansionDirection:Int{
-    case DirectionLeft = 0
-    case DirectionRight
-    case DirectionUp
-    case DirectionDown
+    case directionLeft = 0
+    case directionRight
+    case directionUp
+    case directionDown
 }
 ///----
 ///DWBubbleMenuViewDelegate protocol
 protocol DWBubbleMenuViewDelegate:NSObjectProtocol{
     
-    func bubbleMenuButtonWillExpand(expandableView:DWBubbleMenuButton)
-    func bubbleMenuButtonDidExpand(expandableView:DWBubbleMenuButton)
-    func bubbleMenuButtonWillCollapse(expandableView:DWBubbleMenuButton)
-    func bubbleMenuButtonDidCollapse(expandableView:DWBubbleMenuButton)
+    func bubbleMenuButtonWillExpand(_ expandableView:DWBubbleMenuButton)
+    func bubbleMenuButtonDidExpand(_ expandableView:DWBubbleMenuButton)
+    func bubbleMenuButtonWillCollapse(_ expandableView:DWBubbleMenuButton)
+    func bubbleMenuButtonDidCollapse(_ expandableView:DWBubbleMenuButton)
 }
 
 ///DWBubbleMenuButton
@@ -48,7 +48,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
                 self._homeButtonView = newValue
             }
             
-            if self._homeButtonView!.isDescendantOfView(self) == false {
+            if self._homeButtonView!.isDescendant(of: self) == false {
                 self.addSubview(self._homeButtonView!)
             }
         }
@@ -66,12 +66,12 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     var highlightAlpha:CGFloat = 0.0
     
     
-    func handleTapGesture(sender: UITapGestureRecognizer) {
-        if sender.state == .Ended {
+    func handleTapGesture(_ sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
             
-            let touchLocation:CGPoint = self.tapGestureRecognizer.locationInView(self)
+            let touchLocation:CGPoint = self.tapGestureRecognizer.location(in: self)
             
-            if (self.collapseAfterSelection && isCollapsed == false && CGRectContainsPoint(self.homeButtonView!.frame, touchLocation) == false) {
+            if (self.collapseAfterSelection && isCollapsed == false && self.homeButtonView!.frame.contains(touchLocation) == false) {
                self.dismissButtons()
                 
             }
@@ -79,13 +79,13 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         }
     }
     
-    func _animateWithBlock(block: (() -> Void)!){
+    func _animateWithBlock(_ block: (() -> Void)!){
         
-        UIView.transitionWithView(self, duration: self.animationDuration, options: [UIViewAnimationOptions.BeginFromCurrentState, UIViewAnimationOptions.CurveEaseInOut], animations: block, completion: nil)
+        UIView.transition(with: self, duration: self.animationDuration, options: UIViewAnimationOptions.beginFromCurrentState, animations: block, completion: nil)
     }
     
 
-    func _setTouchHighlighted(highlighted:Bool)
+    func _setTouchHighlighted(_ highlighted:Bool)
     {
         
         let alphaValue = highlighted ? highlightAlpha : standbyAlpha;
@@ -115,32 +115,32 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     
     
     ///add buttons
-    func addButtons(buttons:[UIButton]){
+    func addButtons(_ buttons:[UIButton]){
         
         for  button in buttons{
             self.addButton(button)
         }
         
         if(self.homeButtonView != nil){
-            self.bringSubviewToFront(self.homeButtonView!)
+            self.bringSubview(toFront: self.homeButtonView!)
           
         }
     }
     
     ///add button
-    func addButton(button:UIButton){
+    func addButton(_ button:UIButton){
        
         if !self._containsButton(button) {
             self.buttonContainer.append(button)
             self.addSubview(button)
-            button.hidden=true
+            button.isHidden=true
             
             
         }
         
     }
     
-    func _containsButton(button:UIButton)->Bool {
+    func _containsButton(_ button:UIButton)->Bool {
         for b in self.buttonContainer {
             if b == button{
                 return true
@@ -151,12 +151,12 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
     
     func showButtons(){
         
-        if (self.delegate?.respondsToSelector(Selector("bubbleMenuButtonWillExpand:")) != nil) {
+        if (self.delegate?.responds(to: Selector("bubbleMenuButtonWillExpand:")) != nil) {
             self.delegate?.bubbleMenuButtonWillExpand(self)
         }
         
         self._prepareForButtonExpansion()
-        self.userInteractionEnabled = false
+        self.isUserInteractionEnabled = false
         
         CATransaction.begin()
         
@@ -167,21 +167,21 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
             for btn in self.buttonContainer {
                 
-               (btn as UIButton).transform = CGAffineTransformIdentity
+               (btn as UIButton).transform = CGAffineTransform.identity
             }
             
             if(self.delegate != nil){
-                if (self.delegate?.respondsToSelector(Selector("bubbleMenuButtonDidExpand:")) != nil) {
+                if (self.delegate?.responds(to: Selector("bubbleMenuButtonDidExpand:")) != nil) {
                     self.delegate?.bubbleMenuButtonDidExpand(self)
                 }
             }
-            self.userInteractionEnabled = true
+            self.isUserInteractionEnabled = true
         }
         
         var btnContainer:[UIButton] = buttonContainer
         
-        if self.direction == .DirectionUp || direction == .DirectionLeft {
-            btnContainer = Array(self.buttonContainer.reverse())
+        if self.direction == .directionUp || direction == .directionLeft {
+            btnContainer = Array(self.buttonContainer.reversed())
             
         }
         
@@ -189,47 +189,46 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
             let index = btnContainer.count - (i + 1)
             let button = btnContainer[index]
-            button.hidden = false
+            button.isHidden = false
             
             // position animation
             let positionAnimation = CABasicAnimation(keyPath: "position")
             
-            var originPosition = CGPointZero
-            var finalPosition = CGPointZero
+            var originPosition = CGPoint.zero
+            var finalPosition = CGPoint.zero
            
           
             
             switch (self.direction!) {
-            case .DirectionLeft:
+            case .directionLeft:
                 
-                originPosition = CGPointMake(self.frame.size.width - self.homeButtonView!.frame.size.width, self.frame.size.height/2)
-                
-                finalPosition = CGPointMake(self.frame.size.width - self.homeButtonView!.frame.size.width - button.frame.size.width/2.0 - self.buttonSpacing
-                    - ((button.frame.size.width + self.buttonSpacing)*CGFloat(index)),
-                    self.frame.size.height/2.0)
+                originPosition = CGPoint(x: self.frame.size.width - self.homeButtonView!.frame.size.width, y: self.frame.size.height/2)
+                let x = self.frame.size.width - self.homeButtonView!.frame.size.width - button.frame.size.width/2.0 - self.buttonSpacing
+                    - ((button.frame.size.width + self.buttonSpacing)*CGFloat(index))
+                finalPosition = CGPoint(x:x,y: self.frame.size.height/2.0)
                
                 
-            case .DirectionRight:
-                originPosition = CGPointMake(self.homeButtonView!.frame.size.width, self.frame.size.height/2.0)
+            case .directionRight:
+                originPosition = CGPoint(x: self.homeButtonView!.frame.size.width, y: self.frame.size.height/2.0)
                 
-                finalPosition = CGPointMake(self.homeButtonView!.frame.size.width + self.buttonSpacing + button.frame.size.width/2.0
-                    + ((button.frame.size.width + self.buttonSpacing)*CGFloat(index)),
-                    self.frame.size.height/2.0)
-              
+                let x = self.homeButtonView!.frame.size.width + self.buttonSpacing + button.frame.size.width/2.0
+                    + ((button.frame.size.width + self.buttonSpacing)*CGFloat(index))
+                finalPosition = CGPoint(x:x, y: self.frame.size.height/2.0)
+        
                 
-            case .DirectionUp:
-                originPosition = CGPointMake(self.frame.size.width/2.0, self.frame.size.height - self.homeButtonView!.frame.size.height)
+            case .directionUp:
+                originPosition = CGPoint(x: self.frame.size.width/2.0, y: self.frame.size.height - self.homeButtonView!.frame.size.height)
                 
-                finalPosition = CGPointMake(self.frame.size.width/2.0,
-                    self.frame.size.height - self.homeButtonView!.frame.size.height - self.buttonSpacing - button.frame.size.height/2.0
+                finalPosition = CGPoint(x: self.frame.size.width/2.0,
+                    y: self.frame.size.height - self.homeButtonView!.frame.size.height - self.buttonSpacing - button.frame.size.height/2.0
                         - ((button.frame.size.height + self.buttonSpacing)*CGFloat(index)));
               
                 
-            case .DirectionDown:
-                originPosition = CGPointMake(self.frame.size.width/2.0, self.homeButtonView!.frame.size.height)
+            case .directionDown:
+                originPosition = CGPoint(x: self.frame.size.width/2.0, y: self.homeButtonView!.frame.size.height)
                 
-                finalPosition = CGPointMake(self.frame.size.width/2.0,
-                    self.homeButtonView!.frame.size.height + self.buttonSpacing + button.frame.size.height/2.0
+                finalPosition = CGPoint(x: self.frame.size.width/2.0,
+                    y: self.homeButtonView!.frame.size.height + self.buttonSpacing + button.frame.size.height/2.0
                         + ((button.frame.size.height + self.buttonSpacing)*CGFloat(index)));
               
             }
@@ -242,13 +241,13 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             
         
             
-            positionAnimation.fromValue = NSValue(CGPoint:originPosition)
-            positionAnimation.toValue = NSValue(CGPoint:finalPosition)
+            positionAnimation.fromValue = NSValue(cgPoint:originPosition)
+            positionAnimation.toValue = NSValue(cgPoint:finalPosition)
             positionAnimation.beginTime = CACurrentMediaTime() + (self.animationDuration/Double(btnContainer.count)*Double(i));
             positionAnimation.fillMode = kCAFillModeForwards;
-            positionAnimation.removedOnCompletion = false;
+            positionAnimation.isRemovedOnCompletion = false;
             
-            button.layer.addAnimation(positionAnimation,forKey: "positionAnimation")
+            button.layer.add(positionAnimation,forKey: "positionAnimation")
             button.layer.position = finalPosition;
             
             
@@ -260,16 +259,16 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             
             
-            scaleAnimation.fromValue = NSNumber(float: 0.01)
-            scaleAnimation.toValue = NSNumber(float:1.0)
+            scaleAnimation.fromValue = NSNumber(value: 0.01 as Float)
+            scaleAnimation.toValue = NSNumber(value: 1.0 as Float)
             
             scaleAnimation.beginTime = CACurrentMediaTime() + (animationDuration/Double(btnContainer.count) * Double(i)) + 0.03;
             scaleAnimation.fillMode = kCAFillModeForwards;
-            scaleAnimation.removedOnCompletion = false;
+            scaleAnimation.isRemovedOnCompletion = false;
             
-            button.layer.addAnimation(scaleAnimation, forKey: "scaleAnimation")
+            button.layer.add(scaleAnimation, forKey: "scaleAnimation")
             
-             button.transform = CGAffineTransformMakeScale(0.01, 0.01);
+             button.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
         }
         
         
@@ -289,13 +288,13 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         
     
         
-        if (self.delegate?.respondsToSelector(Selector("bubbleMenuButtonWillCollapse:")) != nil) {
+        if (self.delegate?.responds(to: Selector("bubbleMenuButtonWillCollapse:")) != nil) {
             self.delegate?.bubbleMenuButtonWillCollapse(self)
         }
 
         
         
-        self.userInteractionEnabled = false;
+        self.isUserInteractionEnabled = false;
         
         CATransaction.begin()
         CATransaction.setAnimationDuration(self.animationDuration)
@@ -307,30 +306,30 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             for btn in self.buttonContainer {
                 
                 let button = btn as UIButton
-                button.transform = CGAffineTransformIdentity
-                button.hidden = true
+                button.transform = CGAffineTransform.identity
+                button.isHidden = true
             }
             
             if (self.delegate != nil) {
                 
-                if (self.delegate?.respondsToSelector(Selector("bubbleMenuButtonDidCollapse:")) != nil) {
+                if (self.delegate?.responds(to: Selector("bubbleMenuButtonDidCollapse:")) != nil) {
                     self.delegate?.bubbleMenuButtonDidCollapse(self)
                 }
                
             }
             
-            self.userInteractionEnabled = true;
+            self.isUserInteractionEnabled = true;
         }
         
         
          var index=0;
-         let arr = (0...(buttonContainer.count-1)).reverse()
+         let arr = (0...(buttonContainer.count-1)).reversed()
          for i in arr {
             
             var button = buttonContainer[i]
             
             
-            if (self.direction == .DirectionDown || self.direction == .DirectionRight) {
+            if (self.direction == .directionDown || self.direction == .directionRight) {
                 button = buttonContainer[index]
             }
             
@@ -339,48 +338,48 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
             scaleAnimation.duration = self.animationDuration;
             
             scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            scaleAnimation.fromValue = NSNumber(float: 1.0)
-            scaleAnimation.toValue = NSNumber(float: 0.01)
+            scaleAnimation.fromValue = NSNumber(value: 1.0 as Float)
+            scaleAnimation.toValue = NSNumber(value: 0.01 as Float)
              scaleAnimation.beginTime = CACurrentMediaTime() + (self.animationDuration/Double(buttonContainer.count) * Double(index)) + 0.03;
             
             scaleAnimation.fillMode = kCAFillModeForwards;
-            scaleAnimation.removedOnCompletion = false;
+            scaleAnimation.isRemovedOnCompletion = false;
             
-            button.layer.addAnimation(scaleAnimation, forKey: "scaleAnimation")
+            button.layer.add(scaleAnimation, forKey: "scaleAnimation")
             
-            button.transform = CGAffineTransformMakeScale(1.0, 1.0);
+            button.transform = CGAffineTransform(scaleX: 1.0, y: 1.0);
             
             // position animation
             let positionAnimation = CABasicAnimation(keyPath: "position")
             
             let originPosition = button.layer.position;
-            var finalPosition = CGPointZero;
+            var finalPosition = CGPoint.zero;
             
             switch (self.direction!) {
-            case .DirectionLeft:
-                finalPosition = CGPointMake(self.frame.size.width - self.homeButtonView!.frame.size.width, self.frame.size.height/2.0)
+            case .directionLeft:
+                finalPosition = CGPoint(x: self.frame.size.width - self.homeButtonView!.frame.size.width, y: self.frame.size.height/2.0)
                 
-            case .DirectionRight:
-                finalPosition = CGPointMake(self.homeButtonView!.frame.size.width, self.frame.size.height/2.0)
+            case .directionRight:
+                finalPosition = CGPoint(x: self.homeButtonView!.frame.size.width, y: self.frame.size.height/2.0)
               
                 
-            case .DirectionUp:
-                finalPosition = CGPointMake(self.frame.size.width/2.0, self.frame.size.height - self.homeButtonView!.frame.size.height);
+            case .directionUp:
+                finalPosition = CGPoint(x: self.frame.size.width/2.0, y: self.frame.size.height - self.homeButtonView!.frame.size.height);
             
-            case .DirectionDown:
-                finalPosition = CGPointMake(self.frame.size.width/2.0, self.homeButtonView!.frame.size.height)
+            case .directionDown:
+                finalPosition = CGPoint(x: self.frame.size.width/2.0, y: self.homeButtonView!.frame.size.height)
                 
             }
             
             positionAnimation.duration = self.animationDuration;
             positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            positionAnimation.fromValue = NSValue(CGPoint:originPosition)
-            positionAnimation.toValue = NSValue(CGPoint:finalPosition)
+            positionAnimation.fromValue = NSValue(cgPoint:originPosition)
+            positionAnimation.toValue = NSValue(cgPoint:finalPosition)
             positionAnimation.beginTime = CACurrentMediaTime() + (self.animationDuration/Double(self.buttonContainer.count) * Double(index));
             positionAnimation.fillMode = kCAFillModeForwards;
-            positionAnimation.removedOnCompletion = false;
+            positionAnimation.isRemovedOnCompletion = false;
             
-            button.layer.addAnimation(positionAnimation, forKey:"positionAnimation")
+            button.layer.add(positionAnimation, forKey:"positionAnimation")
             button.layer.position = originPosition;
             index += 1;
 
@@ -397,29 +396,29 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         let buttonWidth:CGFloat = self._combinedButtonWidth()
         
         switch(self.direction!){
-            case .DirectionUp:
-             self.homeButtonView!.autoresizingMask = UIViewAutoresizing.FlexibleTopMargin
+            case .directionUp:
+             self.homeButtonView!.autoresizingMask = UIViewAutoresizing.flexibleTopMargin
              var frame = self.frame
              frame.origin.y -=  buttonHeight
              frame.size.height += buttonHeight
              self.frame = frame
             
-        case .DirectionDown:
-            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.FlexibleBottomMargin
+        case .directionDown:
+            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.flexibleBottomMargin
             var frame = self.frame
             frame.size.height += buttonHeight
             self.frame = frame
-        case .DirectionLeft:
-            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin
+        case .directionLeft:
+            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.flexibleLeftMargin
             var frame = self.frame
             frame.origin.x -=  buttonWidth
 
             frame.size.width += buttonWidth
             self.frame = frame
             
-        case .DirectionRight:
+        case .directionRight:
             
-            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.FlexibleRightMargin
+            self.homeButtonView!.autoresizingMask = UIViewAutoresizing.flexibleRightMargin
             var frame = self.frame
             frame.size.width += buttonWidth
             self.frame = frame
@@ -457,7 +456,7 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         self.clipsToBounds = true;
         self.layer.masksToBounds = true;
         
-        self.direction = .DirectionUp;
+        self.direction = .directionUp;
         self.animatedHighlighting = true;
         self.collapseAfterSelection = true;
         
@@ -501,9 +500,9 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
 
     //pragma mark -
     //pragma mark Touch Handling Methods
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        super.touchesBegan(touches, withEvent: event)
+        super.touchesBegan(touches, with: event)
         
        // var touch = touches.first
         
@@ -512,15 +511,15 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         
     }
 
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
         
         
         //print("touchesMoved")
         let touch = touches.first! as UITouch
         self._setTouchHighlighted(false)
         
-        if(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self))) {
+        if(self.homeButtonView!.frame.contains(touch.location(in: self))) {
             if(isCollapsed){
                 self.showButtons()
             }
@@ -530,25 +529,25 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
         }
     }
     
-    override func touchesCancelled(touches:Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
+    override func touchesCancelled(_ touches:Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
         self._setTouchHighlighted(false)
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        super.touchesMoved(touches, withEvent: event)
+        super.touchesMoved(touches, with: event)
         
         let touch=touches.first! as UITouch
-        self._setTouchHighlighted(CGRectContainsPoint(self.homeButtonView!.frame, touch.locationInView(self)))
+        self._setTouchHighlighted(self.homeButtonView!.frame.contains(touch.location(in: self)))
         
     }
     
     //pragma mark -
     //pragma mark UIGestureRecognizer Delegate
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         
-        let touchLocation =  touch.locationInView(self)
+        let touchLocation =  touch.location(in: self)
         
         if (self._subviewForPoint(touchLocation) != self && collapseAfterSelection) {
             return true;
@@ -558,10 +557,10 @@ class DWBubbleMenuButton:UIView,UIGestureRecognizerDelegate{
 
     }
     
-    func _subviewForPoint(point:CGPoint) -> UIView {
+    func _subviewForPoint(_ point:CGPoint) -> UIView {
         for subView in self.subviews
         {
-            if (CGRectContainsPoint(subView.frame, point)) {
+            if (subView.frame.contains(point)) {
                 return subView ;
             }
 
